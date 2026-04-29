@@ -48,7 +48,40 @@ def sb() -> Client:
     if not url or not key:
         raise HTTPException(500, "SUPABASE_URL / SUPABASE_KEY not set.")
     return create_client(url, key)
+GEMINI_MODELS = [
+    "gemini-2.0-flash",
+    "gemini-2.0-mini",
+    "gemini-1.0",
+]
 
+
+def call_gemini(prompt: str) -> str:
+    client = gemini()
+    last_error: Optional[Exception] = None
+    for model in GEMINI_MODELS:
+        try:
+            response = client.models.generate_content(
+                model=model,
+                contents=prompt,
+            )
+        except Exception as exc:
+            last_error = exc
+            err_text = str(exc)
+            if "RESOURCE_EXHAUSTED" in err_text or "quota" in err_text.lower():
+                continue
+            raise HTTPException(502, f"Gemini call failed: {err_text}") from exc
+
+        text = getattr(response, "text", "")
+        if text and text.strip():
+            return text.strip()
+        last_error = HTTPException(502, f"Gemini returned empty response for model {model}.")
+
+    if isinstance(last_error, HTTPException):
+        raise last_error
+    raise HTTPException(
+        502,
+        "Gemini is unavailable or quota is exhausted. Check your Gemini API quota/billing."
+    ) from last_error
 # ── Static Metadata ────────────────────────────────────────────────────────────
 
 CATEGORY_META: dict[str, dict] = {
