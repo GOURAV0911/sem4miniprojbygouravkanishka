@@ -293,18 +293,7 @@ Return ONLY valid JSON — no markdown, no extra text, no code fences:
 }}"""
 
     # ── Gemini call (new SDK) ──────────────────────────────────────────────────
-    client = gemini()
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt,
-        )
-    except Exception as exc:
-        raise HTTPException(502, f"Gemini call failed: {str(exc)}") from exc
-    if not getattr(response, 'text', None):
-        raise HTTPException(502, "Gemini returned an empty response.")
-    text = response.text.strip()
-    text = response.text.strip()
+    text = call_gemini(prompt)
 
     # Strip markdown fences if model wraps output anyway
     if "```" in text:
