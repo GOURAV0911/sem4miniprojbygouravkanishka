@@ -48,10 +48,11 @@ def sb() -> Client:
     if not url or not key:
         raise HTTPException(500, "SUPABASE_URL / SUPABASE_KEY not set.")
     return create_client(url, key)
+
 GEMINI_MODELS = [
     "gemini-2.0-flash",
-    "gemini-2.0-mini",
     "gemini-1.0",
+    "gemini-2.0-mini",
 ]
 
 
@@ -66,8 +67,14 @@ def call_gemini(prompt: str) -> str:
             )
         except Exception as exc:
             last_error = exc
-            err_text = str(exc)
-            if "RESOURCE_EXHAUSTED" in err_text or "quota" in err_text.lower():
+            err_text = str(exc).lower()
+            if (
+                "resource_exhausted" in err_text
+                or "quota" in err_text
+                or "not found for api version" in err_text
+                or "not supported for generatecontent" in err_text
+                or "not supported for generate content" in err_text
+            ):
                 continue
             raise HTTPException(502, f"Gemini call failed: {err_text}") from exc
 
