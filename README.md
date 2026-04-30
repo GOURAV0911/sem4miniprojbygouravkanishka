@@ -17,6 +17,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini-2.0_Flash-4285F4?style=flat-square&logo=google)](https://aistudio.google.com)
 [![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+<img src = "https://github.com/GOURAV0911/sem4miniprojbygouravkanishka/actions/workflows/ci.yml/badge.svg" alt = "CI Status" />
 
 </div>
 
